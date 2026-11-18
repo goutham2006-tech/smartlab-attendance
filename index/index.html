@@ -1,0 +1,1340 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>SmartLab Monitor | Real-Time Workstation Telemetry & Lab Management</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap"
+    rel="stylesheet" />
+  <link rel="stylesheet" href="assets/css/design-system.css" />
+  <style>
+    :root {
+      --hero-gradient: linear-gradient(135deg, #0f172a 0%, #1e1b4b 50%, #312e81 100%);
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      background: linear-gradient(135deg, #f0f4ff 0%, #e0e7ff 40%, #f8fafc 100%);
+      font-family: 'Inter', sans-serif;
+      color: var(--text-primary);
+    }
+
+    .landing-shell {
+      max-width: 1280px;
+      margin: 0 auto;
+      padding: 36px 24px 80px;
+    }
+
+    .topbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 32px;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      font-weight: 800;
+      font-size: 1.25rem;
+      color: var(--text-primary);
+    }
+
+    .brand-mark {
+      width: 48px;
+      height: 48px;
+      border-radius: 16px;
+      display: grid;
+      place-items: center;
+      background: linear-gradient(135deg, var(--primary-600), var(--primary-800));
+      color: #fff;
+      box-shadow: 0 10px 25px rgba(67, 56, 202, 0.28);
+    }
+
+    .topbar-telemetry-pill {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 8px 18px;
+      background: rgba(16, 185, 129, 0.12);
+      border: 1px solid rgba(16, 185, 129, 0.3);
+      border-radius: 999px;
+      color: #065f46;
+      font-size: 0.85rem;
+      font-weight: 700;
+    }
+
+    .live-dot {
+      width: 9px;
+      height: 9px;
+      border-radius: 50%;
+      background: #10b981;
+    }
+
+    .live-dot.pulse {
+      box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.7);
+      animation: pulse-ring 2s infinite;
+    }
+
+    @keyframes pulse-ring {
+      0% {
+        transform: scale(0.95);
+        box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.7);
+      }
+
+      70% {
+        transform: scale(1);
+        box-shadow: 0 0 0 7px rgba(16, 185, 129, 0);
+      }
+
+      100% {
+        transform: scale(0.95);
+        box-shadow: 0 0 0 0 rgba(16, 185, 129, 0);
+      }
+    }
+
+    .hero {
+      display: grid;
+      grid-template-columns: 1.2fr 0.8fr;
+      gap: 28px;
+      align-items: stretch;
+    }
+
+    .hero-copy,
+    .hero-panel,
+    .stat-card,
+    .switch-card,
+    .telemetry-matrix-panel {
+      background: rgba(255, 255, 255, 0.92);
+      backdrop-filter: blur(12px);
+      border: 1px solid rgba(148, 163, 184, 0.22);
+      box-shadow: var(--shadow-md);
+    }
+
+    .hero-copy {
+      border-radius: 28px;
+      padding: 38px 36px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+    }
+
+    .eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 6px 14px;
+      border-radius: 999px;
+      background: rgba(79, 70, 229, 0.1);
+      color: var(--primary-700);
+      font-size: var(--body-small-size);
+      font-weight: 800;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      width: fit-content;
+    }
+
+    h1 {
+      margin: 18px 0 14px;
+      font-size: clamp(2.4rem, 4.2vw, 3.8rem);
+      line-height: 1.08;
+      font-weight: 900;
+      letter-spacing: -0.02em;
+      color: #0f172a;
+    }
+
+    .hero-copy p {
+      color: var(--text-secondary);
+      font-size: 1.1rem;
+      line-height: 1.6;
+      margin: 0 0 24px;
+      max-width: 58ch;
+    }
+
+    .hero-cta-group {
+      display: flex;
+      gap: 14px;
+      flex-wrap: wrap;
+    }
+
+    .hero-panel {
+      border-radius: 28px;
+      padding: 30px 28px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+
+    .panel-title-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 12px;
+    }
+
+    .panel-title-row h3 {
+      margin: 0;
+      font-size: 1.25rem;
+      font-weight: 800;
+    }
+
+    /* LIVE METER GAUGE */
+    .meter-section {
+      margin: 14px 0 18px;
+    }
+
+    .meter-track {
+      height: 16px;
+      background: #e2e8f0;
+      border-radius: 999px;
+      overflow: hidden;
+      display: flex;
+      box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.06);
+    }
+
+    .m-fill {
+      height: 100%;
+      transition: width 0.6s ease;
+    }
+
+    .m-fill.available {
+      background: linear-gradient(90deg, #10b981, #34d399);
+    }
+
+    .m-fill.inuse {
+      background: linear-gradient(90deg, #3b82f6, #60a5fa);
+    }
+
+    .m-fill.offline {
+      background: #94a3b8;
+    }
+
+    .m-legend {
+      display: flex;
+      justify-content: space-between;
+      margin-top: 8px;
+      font-size: 0.8rem;
+      color: var(--text-secondary);
+    }
+
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 14px;
+      margin-top: 14px;
+    }
+
+    .stat-card {
+      border-radius: 18px;
+      padding: 16px 18px;
+      box-shadow: var(--shadow-sm);
+      transition: transform 0.2s ease;
+    }
+
+    .stat-card:hover {
+      transform: translateY(-2px);
+    }
+
+    .metric-meta {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 0.78rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      color: var(--text-secondary);
+    }
+
+    .metric-value {
+      margin-top: 8px;
+      font-size: 2.1rem;
+      font-weight: 900;
+      color: var(--text-primary);
+      line-height: 1;
+    }
+
+    /* WORKSTATION MATRIX LIVE PREVIEW */
+    .telemetry-matrix-panel {
+      border-radius: 28px;
+      padding: 28px;
+      margin-top: 32px;
+    }
+
+    .matrix-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 16px;
+    }
+
+    .matrix-header h3 {
+      margin: 0;
+      font-size: 1.25rem;
+      font-weight: 800;
+    }
+
+    .matrix-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(42px, 1fr));
+      gap: 8px;
+    }
+
+    .matrix-node {
+      height: 38px;
+      border-radius: 8px;
+      border: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 11px;
+      font-weight: 700;
+      cursor: default;
+      transition: transform 0.15s ease;
+    }
+
+    .matrix-node:hover {
+      transform: scale(1.12);
+      z-index: 2;
+    }
+
+    .matrix-node.available {
+      background: rgba(16, 185, 129, 0.12);
+      color: #065f46;
+      border-color: rgba(16, 185, 129, 0.35);
+    }
+
+    .matrix-node.in-use {
+      background: rgba(59, 130, 246, 0.15);
+      color: #1d4ed8;
+      border-color: rgba(59, 130, 246, 0.35);
+    }
+
+    .matrix-node.offline {
+      background: #f1f5f9;
+      color: #94a3b8;
+    }
+
+    .matrix-node.maintenance {
+      background: rgba(245, 158, 11, 0.15);
+      color: #92400e;
+    }
+
+    /* SWITCH CARDS */
+    .switch-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 28px;
+      margin-top: 32px;
+    }
+
+    .switch-card {
+      border-radius: 26px;
+      padding: 32px 28px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      min-height: 280px;
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    .switch-card:hover {
+      transform: translateY(-3px);
+      box-shadow: var(--shadow-lg);
+    }
+
+    .switch-icon {
+      width: 60px;
+      height: 60px;
+      display: grid;
+      place-items: center;
+      border-radius: 20px;
+      background: rgba(79, 70, 229, 0.12);
+      color: var(--primary-700);
+    }
+
+    .switch-card h2 {
+      margin: 18px 0 8px;
+      font-size: 1.4rem;
+      font-weight: 800;
+    }
+
+    .switch-card p {
+      color: var(--text-secondary);
+      font-size: 0.95rem;
+      line-height: 1.5;
+      margin: 0;
+    }
+
+    .switch-card a {
+      margin-top: 24px;
+      width: fit-content;
+    }
+
+    /* =========================================================
+         ACADEMIC LAB TIMETABLE STYLING (HIGH CONTRAST & VISIBLE)
+      ========================================================= */
+    .timetable-display-card {
+      position: relative;
+      border-radius: 20px;
+      overflow: hidden;
+      background: #ffffff;
+      border: 1.5px solid #cbd5e1;
+      box-shadow: 0 8px 30px rgba(15, 23, 42, 0.05);
+      min-height: 260px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .timetable-fallback-table {
+      width: 100%;
+      padding: 24px;
+      background: #ffffff;
+      color: #0f172a;
+    }
+
+    .timetable-card-topbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+      padding-bottom: 14px;
+      border-bottom: 1.5px solid #f1f5f9;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+
+    .timetable-title {
+      margin: 0;
+      font-size: 1.15rem;
+      font-weight: 800;
+      color: #1e1b4b;
+    }
+
+    .timetable-sub {
+      margin: 4px 0 0;
+      font-size: 0.85rem;
+      color: #64748b;
+    }
+
+    .timetable-table-responsive {
+      overflow-x: auto;
+      border-radius: 14px;
+      border: 1.5px solid #e2e8f0;
+    }
+
+    table.academic-timetable {
+      width: 100%;
+      border-collapse: separate;
+      border-spacing: 0;
+      text-align: left;
+      font-size: 0.88rem;
+      background: #ffffff;
+    }
+
+    table.academic-timetable thead th {
+      background: #f8fafc !important;
+      color: #334155 !important;
+      font-weight: 800 !important;
+      font-size: 0.82rem !important;
+      letter-spacing: 0.05em !important;
+      text-transform: uppercase !important;
+      padding: 14px 16px !important;
+      border-bottom: 2px solid #e2e8f0 !important;
+      border-top: none !important;
+      white-space: nowrap;
+    }
+
+    table.academic-timetable thead th.col-day {
+      width: 130px;
+      color: #4338ca !important;
+    }
+
+    table.academic-timetable tbody tr {
+      transition: background-color 0.15s ease;
+    }
+
+    table.academic-timetable tbody tr:nth-child(even) {
+      background-color: #fbfcfe;
+    }
+
+    table.academic-timetable tbody tr:hover {
+      background-color: #f1f5f9;
+    }
+
+    table.academic-timetable tbody td {
+      padding: 12px 14px !important;
+      border-top: 1px solid #e2e8f0 !important;
+      border-bottom: none !important;
+      color: #1e293b !important;
+      vertical-align: middle;
+    }
+
+    .day-badge {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-width: 95px;
+      padding: 7px 14px;
+      border-radius: 10px;
+      background: linear-gradient(135deg, #4f46e5, #3730a3);
+      color: #ffffff;
+      font-weight: 800;
+      font-size: 0.85rem;
+      box-shadow: 0 2px 8px rgba(79, 70, 229, 0.25);
+    }
+
+    .slot-badge {
+      display: flex;
+      flex-direction: column;
+      gap: 3px;
+      padding: 10px 14px;
+      border-radius: 12px;
+      font-size: 0.82rem;
+      line-height: 1.35;
+      border: 1.5px solid transparent;
+      transition: transform 0.15s ease, box-shadow 0.15s ease;
+    }
+
+    .slot-badge:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+    }
+
+    .slot-badge strong {
+      font-size: 0.86rem;
+      font-weight: 800;
+      display: block;
+    }
+
+    /* Department Colors for 100% visible high contrast */
+    .slot-badge.dept-cse {
+      background: #eef2ff;
+      color: #3730a3;
+      border-color: #c7d2fe;
+    }
+
+    .slot-badge.dept-aids {
+      background: #ecfdf5;
+      color: #065f46;
+      border-color: #a7f3d0;
+    }
+
+    .slot-badge.dept-it {
+      background: #eff6ff;
+      color: #1e40af;
+      border-color: #bfdbfe;
+    }
+
+    .slot-badge.dept-ece {
+      background: #fffbeb;
+      color: #92400e;
+      border-color: #fde68a;
+    }
+
+    .slot-badge.dept-eee {
+      background: #fff1f2;
+      color: #9f1239;
+      border-color: #fecdd3;
+    }
+
+    .slot-badge.dept-mech {
+      background: #f0fdfa;
+      color: #115e59;
+      border-color: #99f6e4;
+    }
+
+    .slot-badge.dept-open {
+      background: #f8fafc;
+      color: #334155;
+      border-color: #cbd5e1;
+    }
+
+    .slot-badge.dept-skill {
+      background: #faf5ff;
+      color: #6b21a8;
+      border-color: #e9d5ff;
+    }
+
+    .slot-badge.dept-innov {
+      background: #fefce8;
+      color: #854d0e;
+      border-color: #fef08a;
+    }
+
+    .slot-badge.dept-maint {
+      background: #f1f5f9;
+      color: #475569;
+      border-color: #cbd5e1;
+    }
+
+    /* Timetable Edit Modal Styles */
+    .day-edit-card {
+      background: #f8fafc;
+      border: 1.5px solid #e2e8f0;
+      border-radius: 14px;
+      padding: 14px 18px;
+    }
+
+    .day-edit-header {
+      font-weight: 800;
+      color: #1e1b4b;
+      margin-bottom: 12px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 0.95rem;
+    }
+
+    .day-slots-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+      gap: 12px;
+    }
+
+    .slot-edit-box {
+      background: #ffffff;
+      border: 1px solid #cbd5e1;
+      border-radius: 10px;
+      padding: 10px 12px;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .slot-edit-box label {
+      font-size: 0.74rem;
+      font-weight: 700;
+      color: #475569;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+    }
+
+    .slot-edit-box input {
+      border: 1px solid #cbd5e1;
+      border-radius: 6px;
+      padding: 6px 8px;
+      font-size: 0.85rem;
+      color: #0f172a;
+      background: #f8fafc;
+      outline: none;
+      transition: border-color 0.15s, background-color 0.15s;
+    }
+
+    .slot-edit-box input:focus {
+      border-color: #4f46e5;
+      background: #ffffff;
+      box-shadow: 0 0 0 2px rgba(79, 70, 229, 0.15);
+    }
+
+    @media (max-width: 900px) {
+
+      .hero,
+      .switch-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="landing-shell">
+    <header class="topbar">
+      <div class="brand">
+        <div class="brand-mark">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+            <path d="M4 18V7.5A1.5 1.5 0 0 1 5.5 6H18.5A1.5 1.5 0 0 1 20 7.5V18M8 9.5H16M8 13H13M9 18V20M15 18V20"
+              stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" />
+          </svg>
+        </div>
+        <span>SmartLab Monitor</span>
+      </div>
+      <div class="topbar-telemetry-pill">
+        <span class="live-dot pulse"></span>
+        <span id="landing-live-status">Live Telemetry: Operational</span>
+      </div>
+    </header>
+
+    <main class="hero">
+      <section class="hero-copy">
+        <div class="eyebrow">
+          <span>⚡ Innovation Lab 01</span>
+          <span>·</span>
+          <span>Live Workstation Telemetry</span>
+        </div>
+        <h1>Real-time lab usage logging & workstation telemetry.</h1>
+        <p>
+          Monitor 60 computing workstations in real time. Students can reserve available systems with automatic conflict
+          detection, while staff and administrators oversee live telemetry, faculty assignments, and comprehensive
+          monthly reports.
+        </p>
+        <div class="hero-cta-group">
+          <a href="student.html" class="btn btn-primary" style="padding: 14px 26px; font-size: 1.05rem;">
+            <span>Student Portal</span>
+            <span>→</span>
+          </a>
+          <a href="admin.html" class="btn btn-secondary" style="padding: 14px 26px; font-size: 1.05rem;">
+            <span>Admin & Staff Console</span>
+          </a>
+        </div>
+      </section>
+
+      <aside class="hero-panel">
+        <div>
+          <div class="panel-title-row">
+            <h3>Live Lab Telemetry</h3>
+            <span class="status-badge success" id="landing-kpi-badge">Real-Time</span>
+          </div>
+
+          <div class="meter-section">
+            <div class="meter-track">
+              <div id="m-avail-bar" class="m-fill available" style="width: 58%;"></div>
+              <div id="m-inuse-bar" class="m-fill inuse" style="width: 32%;"></div>
+              <div id="m-off-bar" class="m-fill offline" style="width: 10%;"></div>
+            </div>
+            <div class="m-legend">
+              <span>Available: <strong id="m-avail-lbl">0%</strong></span>
+              <span>In Use: <strong id="m-inuse-lbl">0%</strong></span>
+              <span>Offline: <strong id="m-off-lbl">0%</strong></span>
+            </div>
+          </div>
+        </div>
+
+        <div class="stats-grid" id="landing-stats"></div>
+      </aside>
+    </main>
+
+    <!-- LIVE WORKSTATION MATRIX PREVIEW -->
+    <section class="telemetry-matrix-panel">
+      <div class="matrix-header">
+        <div>
+          <h3>Workstation Grid Snapshot (60 Systems)</h3>
+          <span class="text-muted">Live telemetry states automatically synced from database</span>
+        </div>
+        <div class="picker-legend" style="display: flex; gap: 14px; font-size: 0.82rem;">
+          <span><span class="live-dot" style="display: inline-block; background: #10b981;"></span> Available</span>
+          <span><span class="live-dot" style="display: inline-block; background: #3b82f6;"></span> In Use</span>
+          <span><span class="live-dot" style="display: inline-block; background: #94a3b8;"></span> Offline</span>
+        </div>
+      </div>
+      <div class="matrix-grid" id="landing-matrix"></div>
+    </section>
+
+    <!-- LAB TIMETABLE VIEW & UPLOAD SECTION -->
+    <section class="timetable-panel" id="timetable-section"
+      style="margin-top: 32px; background: rgba(255, 255, 255, 0.95); border: 1px solid var(--border); border-radius: 26px; padding: 32px 28px; box-shadow: var(--shadow-sm);">
+      <div class="timetable-header"
+        style="display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 16px; margin-bottom: 22px;">
+        <div>
+          <div class="eyebrow"
+            style="display: inline-flex; align-items: center; gap: 6px; font-size: 0.82rem; font-weight: 700; color: var(--primary-700); text-transform: uppercase; margin-bottom: 6px;">
+            <span>📅 Academic Schedule</span>
+            <span>·</span>
+            <span>Innovation Lab 01</span>
+          </div>
+          <h2 style="font-size: 1.45rem; font-weight: 800; margin: 0 0 6px;">Lab Timetable & Session Schedule</h2>
+          <p class="text-muted" style="margin: 0; font-size: 0.92rem; color: var(--text-secondary);">
+            Inspect weekly lab slot allocations or upload a timetable image to display the official lab notice sheet.
+          </p>
+        </div>
+        <div class="timetable-actions" style="display: flex; align-items: center; gap: 12px; flex-wrap: wrap;">
+          <button id="edit-timetable-modal-btn" type="button" class="btn btn-secondary"
+            style="display: inline-flex; align-items: center; gap: 8px;">
+            <span>✏️ Edit Timetable</span>
+          </button>
+          <label for="timetable-file-input" class="btn btn-secondary"
+            style="cursor: pointer; display: inline-flex; align-items: center; gap: 8px; margin: 0;">
+            <span>📤 Upload Timetable Image</span>
+            <input type="file" id="timetable-file-input" accept="image/*" style="display: none;" />
+          </label>
+          <button id="view-timetable-modal-btn" type="button" class="btn btn-primary"
+            style="display: inline-flex; align-items: center; gap: 8px;">
+            <span>🔍 Full View</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- TIMETABLE DISPLAY CARD -->
+      <div class="timetable-display-card" id="timetable-preview-card" title="Click to view full size timetable"
+        style="cursor: pointer;">
+        <img id="timetable-image-preview" src="" alt="Lab Timetable Image"
+          style="width: 100%; max-height: 520px; object-fit: contain; display: none; border-radius: 16px;" />
+
+        <!-- DEFAULT SCHEDULE TABLE (shown if no custom image is uploaded) -->
+        <div id="timetable-fallback-table" class="timetable-fallback-table">
+          <div class="timetable-card-topbar">
+            <div>
+              <h3 class="timetable-title">Weekly Lab Allocation Schedule</h3>
+              <p class="timetable-sub">Standard Weekly Department Lab Allocations · Click "Upload Timetable Image" above
+                to update with an official notice</p>
+            </div>
+            <span class="status-badge success" id="timetable-status-tag">Active Schedule</span>
+          </div>
+
+          <div class="timetable-table-responsive">
+            <table class="academic-timetable">
+              <thead>
+                <tr>
+                  <th class="col-day">Day</th>
+                  <th>09:00 AM – 10:30 AM</th>
+                  <th>10:45 AM – 12:15 PM</th>
+                  <th>01:30 PM – 03:00 PM</th>
+                  <th>03:15 PM – 04:45 PM</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td class="day-cell"><span class="day-badge">Monday</span></td>
+                  <td>
+                    <div class="slot-badge dept-cse"><strong>CSE</strong>Data Structures Lab</div>
+                  </td>
+                  <td>
+                    <div class="slot-badge dept-aids"><strong>AI &amp; DS</strong>Machine Learning Lab</div>
+                  </td>
+                  <td>
+                    <div class="slot-badge dept-open"><strong>Project Lab</strong>Open Development</div>
+                  </td>
+                  <td>
+                    <div class="slot-badge dept-ece"><strong>ECE</strong>IoT &amp; Embedded Systems</div>
+                  </td>
+                </tr>
+                <tr>
+                  <td class="day-cell"><span class="day-badge">Tuesday</span></td>
+                  <td>
+                    <div class="slot-badge dept-it"><strong>IT</strong>Full Stack Web Lab</div>
+                  </td>
+                  <td>
+                    <div class="slot-badge dept-cse"><strong>CSE</strong>Database Systems (DBMS)</div>
+                  </td>
+                  <td>
+                    <div class="slot-badge dept-eee"><strong>EEE</strong>Microcontrollers Lab</div>
+                  </td>
+                  <td>
+                    <div class="slot-badge dept-open"><strong>Research Lab</strong>Open Practice</div>
+                  </td>
+                </tr>
+                <tr>
+                  <td class="day-cell"><span class="day-badge">Wednesday</span></td>
+                  <td>
+                    <div class="slot-badge dept-aids"><strong>AI &amp; DS</strong>Deep Learning Lab</div>
+                  </td>
+                  <td>
+                    <div class="slot-badge dept-cse"><strong>CSE</strong>Algorithms Design Lab</div>
+                  </td>
+                  <td>
+                    <div class="slot-badge dept-mech"><strong>MECH</strong>Finite Element Analysis</div>
+                  </td>
+                  <td>
+                    <div class="slot-badge dept-open"><strong>Skill Lab</strong>Self-Paced Practice</div>
+                  </td>
+                </tr>
+                <tr>
+                  <td class="day-cell"><span class="day-badge">Thursday</span></td>
+                  <td>
+                    <div class="slot-badge dept-ece"><strong>ECE</strong>DSP &amp; Networks Lab</div>
+                  </td>
+                  <td>
+                    <div class="slot-badge dept-it"><strong>IT</strong>Cloud &amp; DevOps Lab</div>
+                  </td>
+                  <td>
+                    <div class="slot-badge dept-cse"><strong>CSE</strong>Systems Programming</div>
+                  </td>
+                  <td>
+                    <div class="slot-badge dept-skill"><strong>Contest Lab</strong>Coding Competitions</div>
+                  </td>
+                </tr>
+                <tr>
+                  <td class="day-cell"><span class="day-badge">Friday</span></td>
+                  <td>
+                    <div class="slot-badge dept-innov"><strong>Innovation Lab</strong>Sandbox Prototyping</div>
+                  </td>
+                  <td>
+                    <div class="slot-badge dept-aids"><strong>AI &amp; DS</strong>Computer Vision Lab</div>
+                  </td>
+                  <td>
+                    <div class="slot-badge dept-open"><strong>Project Lab</strong>Final Year Review</div>
+                  </td>
+                  <td>
+                    <div class="slot-badge dept-maint"><strong>Maintenance</strong>Lab Server Updates</div>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+      <div id="timetable-upload-status" style="margin-top: 10px; font-size: 0.88rem; font-weight: 600;"></div>
+    </section>
+
+    <!-- TIMETABLE FULL VIEW MODAL -->
+    <div id="timetable-modal" class="modal hidden"
+      style="position: fixed; inset: 0; z-index: 1000; display: flex; align-items: center; justify-content: center;">
+      <div class="modal-overlay" id="timetable-modal-overlay"
+        style="position: absolute; inset: 0; background: rgba(15, 23, 42, 0.65); backdrop-filter: blur(6px);"></div>
+      <div class="modal-card"
+        style="position: relative; z-index: 1001; width: min(1040px, calc(100vw - 32px)); max-height: 90vh; background: #ffffff; border: 1.5px solid #cbd5e1; border-radius: 24px; padding: 26px; display: flex; flex-direction: column; box-shadow: 0 20px 50px rgba(0,0,0,0.2);">
+        <div
+          style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 18px; padding-bottom: 12px; border-bottom: 1px solid #e2e8f0;">
+          <h3 style="color: #0f172a; margin: 0; font-size: 1.3rem; font-weight: 800;">Lab Timetable & Schedule Preview
+          </h3>
+          <button type="button" id="close-timetable-modal-btn"
+            style="background: rgba(148,163,184,0.15); border: none; color: #475569; font-size: 1.5rem; cursor: pointer; width: 36px; height: 36px; border-radius: 50%; display: grid; place-items: center; transition: all 0.2s;"
+            title="Close">×</button>
+        </div>
+        <div
+          style="overflow: auto; flex: 1; display: flex; align-items: center; justify-content: center; min-height: 280px;"
+          id="timetable-modal-content-wrap">
+          <img id="timetable-modal-image" src="" alt="Timetable Full View"
+            style="max-width: 100%; max-height: 70vh; object-fit: contain; border-radius: 12px; display: none;" />
+          <div id="timetable-modal-fallback" style="width: 100%;"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- TIMETABLE EDIT MODAL -->
+    <div id="timetable-edit-modal" class="modal hidden"
+      style="position: fixed; inset: 0; z-index: 1000; display: flex; align-items: center; justify-content: center;">
+      <div class="modal-overlay" id="timetable-edit-modal-overlay"
+        style="position: absolute; inset: 0; background: rgba(15, 23, 42, 0.65); backdrop-filter: blur(6px);"></div>
+      <div class="modal-card"
+        style="position: relative; z-index: 1001; width: min(1080px, calc(100vw - 32px)); max-height: 90vh; background: #ffffff; border: 1.5px solid #cbd5e1; border-radius: 24px; padding: 26px; display: flex; flex-direction: column; box-shadow: 0 20px 50px rgba(0,0,0,0.2);">
+        <div
+          style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; padding-bottom: 12px; border-bottom: 1px solid #e2e8f0;">
+          <div>
+            <h3 style="color: #0f172a; margin: 0; font-size: 1.3rem; font-weight: 800;">✏️ Edit Lab Timetable Schedule
+            </h3>
+            <p style="margin: 4px 0 0; font-size: 0.85rem; color: #64748b;">Configure Department & Subject allocations
+              for all weekly sessions (Monday – Friday)</p>
+          </div>
+          <button type="button" id="close-timetable-edit-modal-btn"
+            style="background: rgba(148,163,184,0.15); border: none; color: #475569; font-size: 1.5rem; cursor: pointer; width: 36px; height: 36px; border-radius: 50%; display: grid; place-items: center; transition: all 0.2s;"
+            title="Close">×</button>
+        </div>
+
+        <div id="timetable-edit-status" style="margin-bottom: 12px; display: none;"></div>
+
+        <form id="timetable-edit-form" style="overflow-y: auto; flex: 1; padding-right: 6px;">
+          <div id="timetable-edit-grid" style="display: flex; flex-direction: column; gap: 18px;">
+            <!-- Rendered dynamically for Monday..Friday -->
+          </div>
+
+          <div
+            style="display: flex; justify-content: space-between; align-items: center; margin-top: 22px; padding-top: 16px; border-top: 1.5px solid #e2e8f0; flex-wrap: wrap; gap: 12px;">
+            <button type="button" id="reset-timetable-defaults-btn" class="btn btn-ghost"
+              style="color: #dc2626; border: 1.5px solid #fecaca; background: #fff1f2;">
+              🔄 Reset to Default Schedule
+            </button>
+            <div style="display: flex; gap: 10px;">
+              <button type="button" id="cancel-timetable-edit-btn" class="btn btn-secondary">Cancel</button>
+              <button type="submit" id="save-timetable-schedule-btn" class="btn btn-primary"
+                style="display: inline-flex; align-items: center; gap: 6px;">
+                <span>💾 Save Timetable Schedule</span>
+              </button>
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <!-- NAVIGATION CARDS -->
+    <section class="switch-grid">
+      <article class="switch-card">
+        <div>
+          <div class="switch-icon">
+            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+              <path d="M7 17V7.5A1.5 1.5 0 0 1 8.5 6H15.5A1.5 1.5 0 0 1 17 7.5V17M9 10.5H15M9 14H13M4 18H20"
+                stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" />
+            </svg>
+          </div>
+          <h2>Student Session Portal</h2>
+          <p>Pick an available machine directly from the visual matrix, schedule your session start and end times, and
+            receive an instant verifiable digital booking pass.</p>
+        </div>
+        <a href="student.html" class="btn btn-primary">Open Student Portal →</a>
+      </article>
+
+      <article class="switch-card">
+        <div>
+          <div class="switch-icon">
+            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+              <path d="M4 18V7.5A1.5 1.5 0 0 1 5.5 6H18.5A1.5 1.5 0 0 1 20 7.5V18M8 9.5H16M8 13.5H16M12 18V20M4 18H20"
+                stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" />
+            </svg>
+          </div>
+          <h2>Admin & Staff Dashboard</h2>
+          <p>Manage lab faculty and technicians with full add/edit/delete controls, monitor workstation telemetry in
+            real-time, release machines, and export monthly CSV reports.</p>
+        </div>
+        <a href="admin.html" class="btn btn-secondary">Access Admin Panel →</a>
+      </article>
+    </section>
+  </div>
+
+  <script src="assets/js/utils.js"></script>
+  <script src="assets/js/data.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', async function () {
+      // Automatically logout student session whenever arriving at Home
+      sessionStorage.removeItem('smartlab_student');
+
+      const statsWrap = document.getElementById('landing-stats');
+      const matrixWrap = document.getElementById('landing-matrix');
+      const mAvailBar = document.getElementById('m-avail-bar');
+      const mInuseBar = document.getElementById('m-inuse-bar');
+      const mOffBar = document.getElementById('m-off-bar');
+      const mAvailLbl = document.getElementById('m-avail-lbl');
+      const mInuseLbl = document.getElementById('m-inuse-lbl');
+      const mOffLbl = document.getElementById('m-off-lbl');
+      const liveStatus = document.getElementById('landing-live-status');
+
+      async function refreshLandingStats(forceFresh = false) {
+        const summary = await SmartLabData.getComputerStatusSummary(forceFresh);
+        const state = await SmartLabData.loadState(forceFresh);
+        const computers = state?.computers || [];
+        const total = summary.total || computers.length || 60;
+        const available = summary.available;
+        const inUse = summary.inUse;
+        const offline = summary.offline + (summary.maintenance || 0);
+
+        if (liveStatus) {
+          liveStatus.textContent = `Live: ${available} Available · ${inUse} In Use`;
+        }
+
+        if (mAvailBar && mInuseBar && mOffBar) {
+          mAvailBar.style.width = `${summary.availablePct}%`;
+          mInuseBar.style.width = `${summary.occupancyPct}%`;
+          const offPct = Math.max(0, 100 - summary.availablePct - summary.occupancyPct).toFixed(1);
+          mOffBar.style.width = `${offPct}%`;
+
+          mAvailLbl.textContent = `${summary.availablePct}% (${available})`;
+          mInuseLbl.textContent = `${summary.occupancyPct}% (${inUse})`;
+          mOffLbl.textContent = `${offPct}% (${offline})`;
+        }
+
+        const statItems = [
+          { label: 'Total PCs', value: total, tone: 'primary', icon: '🖥️' },
+          { label: 'Available', value: available, tone: 'success', icon: '🟢' },
+          { label: 'In Use', value: inUse, tone: 'info', icon: '🔵' },
+          { label: 'Staff Count', value: summary.totalStaff || (state.staff || []).length, tone: 'warning', icon: '👨‍🏫' }
+        ];
+
+        statsWrap.innerHTML = statItems.map((item) => `
+            <div class="stat-card">
+              <div class="metric-meta">
+                <span>${item.label}</span>
+                <span>${item.icon}</span>
+              </div>
+              <div class="metric-value">${item.value}</div>
+            </div>
+          `).join('');
+
+        // Matrix grid of 60 PCs
+        if (matrixWrap && computers.length) {
+          matrixWrap.innerHTML = computers.map((pc) => {
+            const cls = (pc.status || 'AVAILABLE').toLowerCase().replace('_', '-');
+            const shortNum = pc.id.replace('LAB-PC-', '');
+            const tooltip = `${pc.id}: ${pc.status}${pc.studentName ? ' (' + pc.studentName + ')' : ''}`;
+            return `<div class="matrix-node ${cls}" title="${tooltip}">${shortNum}</div>`;
+          }).join('');
+        }
+      }
+
+      // TIMETABLE LOGIC
+      const timetableFileInput = document.getElementById('timetable-file-input');
+      const timetableImagePreview = document.getElementById('timetable-image-preview');
+      const timetableFallbackTable = document.getElementById('timetable-fallback-table');
+      const timetableStatusTag = document.getElementById('timetable-status-tag');
+      const timetableUploadStatus = document.getElementById('timetable-upload-status');
+      const timetableModal = document.getElementById('timetable-modal');
+      const timetableModalImage = document.getElementById('timetable-modal-image');
+      const timetableModalFallback = document.getElementById('timetable-modal-fallback');
+      const viewTimetableModalBtn = document.getElementById('view-timetable-modal-btn');
+      const closeTimetableModalBtn = document.getElementById('close-timetable-modal-btn');
+      const timetableModalOverlay = document.getElementById('timetable-modal-overlay');
+      const timetablePreviewCard = document.getElementById('timetable-preview-card');
+
+      // TIMETABLE EDIT MODAL ELEMENTS
+      const editTimetableModalBtn = document.getElementById('edit-timetable-modal-btn');
+      const timetableEditModal = document.getElementById('timetable-edit-modal');
+      const timetableEditModalOverlay = document.getElementById('timetable-edit-modal-overlay');
+      const closeTimetableEditModalBtn = document.getElementById('close-timetable-edit-modal-btn');
+      const cancelTimetableEditBtn = document.getElementById('cancel-timetable-edit-btn');
+      const timetableEditForm = document.getElementById('timetable-edit-form');
+      const timetableEditGrid = document.getElementById('timetable-edit-grid');
+      const timetableEditStatus = document.getElementById('timetable-edit-status');
+      const resetTimetableDefaultsBtn = document.getElementById('reset-timetable-defaults-btn');
+
+      const SLOT_LABELS = [
+        '09:00 AM – 10:30 AM',
+        '10:45 AM – 12:15 PM',
+        '01:30 PM – 03:00 PM',
+        '03:15 PM – 04:45 PM'
+      ];
+
+      function getDeptClass(dept) {
+        const d = (dept || '').toLowerCase();
+        if (d.includes('cse')) return 'dept-cse';
+        if (d.includes('ai') || d.includes('ds')) return 'dept-aids';
+        if (d.includes('it')) return 'dept-it';
+        if (d.includes('ece')) return 'dept-ece';
+        if (d.includes('eee')) return 'dept-eee';
+        if (d.includes('mech')) return 'dept-mech';
+        if (d.includes('innov')) return 'dept-innov';
+        if (d.includes('maint')) return 'dept-maint';
+        if (d.includes('contest') || d.includes('skill')) return 'dept-skill';
+        return 'dept-open';
+      }
+
+      function renderTimetableTable(schedule) {
+        if (!schedule || !Array.isArray(schedule)) return;
+        const tbody = document.querySelector('#timetable-fallback-table tbody');
+        if (!tbody) return;
+
+        tbody.innerHTML = schedule.map(dayItem => {
+          const slotsHtml = (dayItem.slots || []).map(slot => {
+            const deptClass = getDeptClass(slot.dept);
+            return `<td><div class="slot-badge ${deptClass}"><strong>${SmartLabUtils.escapeHtml(slot.dept || 'Open')}</strong>${SmartLabUtils.escapeHtml(slot.subject || 'Free Session')}</div></td>`;
+          }).join('');
+
+          return `
+            <tr>
+              <td class="day-cell"><span class="day-badge">${SmartLabUtils.escapeHtml(dayItem.day)}</span></td>
+              ${slotsHtml}
+            </tr>
+          `;
+        }).join('');
+      }
+
+      let currentTimetableImageUrl = null;
+      let activeScheduleData = null;
+
+      async function loadTimetable() {
+        try {
+          const schedRes = await SmartLabData.getTimetableSchedule();
+          if (schedRes && schedRes.schedule) {
+            activeScheduleData = schedRes.schedule;
+            renderTimetableTable(activeScheduleData);
+            if (timetableStatusTag && schedRes.isCustom) {
+              timetableStatusTag.textContent = 'Custom Schedule Active';
+            }
+          }
+
+          const data = await SmartLabData.getTimetable();
+          const hasImg = data && (data.hasImage || data.has_image);
+          const imgUrl = data && (data.imageUrl || data.image_url);
+          if (hasImg && imgUrl) {
+            currentTimetableImageUrl = `${imgUrl}?_t=${Date.now()}`;
+            timetableImagePreview.src = currentTimetableImageUrl;
+            timetableImagePreview.style.display = 'block';
+            timetableFallbackTable.style.display = 'none';
+            if (timetableStatusTag) {
+              timetableStatusTag.textContent = 'Custom Timetable Uploaded';
+              timetableStatusTag.className = 'status-badge info';
+            }
+          } else {
+            currentTimetableImageUrl = null;
+            timetableImagePreview.style.display = 'none';
+            timetableFallbackTable.style.display = 'block';
+          }
+        } catch (e) {
+          // Keep fallback
+        }
+      }
+
+      function populateTimetableEditGrid(schedule) {
+        if (!timetableEditGrid || !schedule) return;
+        timetableEditGrid.innerHTML = schedule.map((dayItem, dayIdx) => {
+          const slotsHtml = (dayItem.slots || []).map((slot, slotIdx) => `
+            <div class="slot-edit-box">
+              <label>${SLOT_LABELS[slotIdx] || `Slot ${slotIdx + 1}`}</label>
+              <input type="text" name="dept_${dayIdx}_${slotIdx}" value="${SmartLabUtils.escapeHtml(slot.dept || '')}" placeholder="Dept (e.g. CSE, AI & DS)" required style="margin-bottom: 4px;" />
+              <input type="text" name="subject_${dayIdx}_${slotIdx}" value="${SmartLabUtils.escapeHtml(slot.subject || '')}" placeholder="Lab Subject / Topic" required />
+            </div>
+          `).join('');
+
+          return `
+            <div class="day-edit-card">
+              <div class="day-edit-header">
+                <span class="day-badge" style="font-size: 0.85rem; padding: 4px 10px;">${SmartLabUtils.escapeHtml(dayItem.day)}</span>
+                <span style="color: #64748b; font-size: 0.82rem; font-weight: 500;">4 Lab Allocation Sessions</span>
+              </div>
+              <div class="day-slots-grid">
+                ${slotsHtml}
+              </div>
+            </div>
+          `;
+        }).join('');
+      }
+
+      async function openTimetableEditModal() {
+        if (!timetableEditModal) return;
+        try {
+          const res = await SmartLabData.getTimetableSchedule();
+          activeScheduleData = res.schedule;
+          populateTimetableEditGrid(activeScheduleData);
+          if (timetableEditStatus) timetableEditStatus.style.display = 'none';
+          timetableEditModal.classList.remove('hidden');
+        } catch (err) {
+          SmartLabUtils.showToast('Failed to load schedule editor.', 'danger');
+        }
+      }
+
+      function closeTimetableEditModal() {
+        if (timetableEditModal) timetableEditModal.classList.add('hidden');
+      }
+
+      if (editTimetableModalBtn) editTimetableModalBtn.addEventListener('click', openTimetableEditModal);
+      if (closeTimetableEditModalBtn) closeTimetableEditModalBtn.addEventListener('click', closeTimetableEditModal);
+      if (cancelTimetableEditBtn) cancelTimetableEditBtn.addEventListener('click', closeTimetableEditModal);
+      if (timetableEditModalOverlay) timetableEditModalOverlay.addEventListener('click', closeTimetableEditModal);
+
+      if (timetableEditForm) {
+        timetableEditForm.addEventListener('submit', async function (e) {
+          e.preventDefault();
+          const saveBtn = document.getElementById('save-timetable-schedule-btn');
+          if (saveBtn) {
+            saveBtn.disabled = true;
+            saveBtn.textContent = 'Saving Schedule...';
+          }
+
+          try {
+            const formData = new FormData(timetableEditForm);
+            const days = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday'];
+            const newSchedule = days.map((dayName, dayIdx) => {
+              const slots = [];
+              for (let slotIdx = 0; slotIdx < 4; slotIdx++) {
+                const dept = (formData.get(`dept_${dayIdx}_${slotIdx}`) || '').toString().trim();
+                const subject = (formData.get(`subject_${dayIdx}_${slotIdx}`) || '').toString().trim();
+                slots.push({ dept, subject });
+              }
+              return { day: dayName, slots };
+            });
+
+            const res = await SmartLabData.saveTimetableSchedule(newSchedule);
+            if (res && res.ok) {
+              activeScheduleData = newSchedule;
+              renderTimetableTable(newSchedule);
+              if (timetableStatusTag) {
+                timetableStatusTag.textContent = 'Custom Schedule Active';
+                timetableStatusTag.className = 'status-badge success';
+              }
+              SmartLabUtils.showToast('Lab timetable schedule saved successfully!', 'success');
+              closeTimetableEditModal();
+            } else {
+              throw new Error(res?.message || 'Failed to save timetable schedule');
+            }
+          } catch (err) {
+            if (timetableEditStatus) {
+              timetableEditStatus.style.display = 'block';
+              timetableEditStatus.innerHTML = `<div class="panel-box" style="padding: 10px 14px; background: #fef2f2; border-left: 4px solid #ef4444; color: #991b1b; font-weight: 600;">Error: ${SmartLabUtils.escapeHtml(err.message)}</div>`;
+            }
+            SmartLabUtils.showToast(err.message || 'Error saving timetable', 'danger');
+          } finally {
+            if (saveBtn) {
+              saveBtn.disabled = false;
+              saveBtn.innerHTML = '<span>💾 Save Timetable Schedule</span>';
+            }
+          }
+        });
+      }
+
+      if (resetTimetableDefaultsBtn) {
+        resetTimetableDefaultsBtn.addEventListener('click', async function () {
+          if (!confirm('Are you sure you want to reset the timetable schedule to default?')) return;
+          try {
+            const res = await SmartLabData.resetTimetableSchedule();
+            if (res && res.ok) {
+              activeScheduleData = res.schedule;
+              populateTimetableEditGrid(activeScheduleData);
+              renderTimetableTable(activeScheduleData);
+              if (timetableStatusTag) {
+                timetableStatusTag.textContent = 'Active Schedule';
+                timetableStatusTag.className = 'status-badge success';
+              }
+              SmartLabUtils.showToast('Timetable reset to default schedule.', 'success');
+            }
+          } catch (err) {
+            SmartLabUtils.showToast('Failed to reset schedule: ' + err.message, 'danger');
+          }
+        });
+      }
+
+      if (timetableFileInput) {
+        timetableFileInput.addEventListener('change', async function () {
+          const file = timetableFileInput.files[0];
+          if (!file) return;
+
+          if (timetableUploadStatus) {
+            timetableUploadStatus.innerHTML = '<span style="color: #4f46e5;">Uploading timetable image...</span>';
+          }
+
+          try {
+            const formData = new FormData();
+            formData.append('image', file);
+            const result = await SmartLabData.uploadTimetable(formData);
+
+            if (result && result.ok) {
+              if (timetableUploadStatus) {
+                timetableUploadStatus.innerHTML = '<span style="color: #059669;">✓ Timetable uploaded and updated successfully!</span>';
+                setTimeout(() => { if (timetableUploadStatus) timetableUploadStatus.innerHTML = ''; }, 4000);
+              }
+              await loadTimetable();
+            } else {
+              throw new Error(result?.message || 'Upload failed');
+            }
+          } catch (err) {
+            if (timetableUploadStatus) {
+              timetableUploadStatus.innerHTML = `<span style="color: #ef4444;">Error: ${err.message || 'Failed to upload timetable image'}</span>`;
+            }
+          }
+        });
+      }
+
+      function openTimetableModal() {
+        if (!timetableModal) return;
+        if (currentTimetableImageUrl) {
+          timetableModalImage.src = currentTimetableImageUrl;
+          timetableModalImage.style.display = 'block';
+          timetableModalFallback.style.display = 'none';
+        } else {
+          timetableModalImage.style.display = 'none';
+          timetableModalFallback.innerHTML = timetableFallbackTable.innerHTML;
+          timetableModalFallback.style.display = 'block';
+        }
+        timetableModal.classList.remove('hidden');
+      }
+
+      function closeTimetableModal() {
+        if (timetableModal) timetableModal.classList.add('hidden');
+      }
+
+      if (viewTimetableModalBtn) viewTimetableModalBtn.addEventListener('click', openTimetableModal);
+      if (timetablePreviewCard) timetablePreviewCard.addEventListener('click', openTimetableModal);
+      if (closeTimetableModalBtn) closeTimetableModalBtn.addEventListener('click', closeTimetableModal);
+      if (timetableModalOverlay) timetableModalOverlay.addEventListener('click', closeTimetableModal);
+
+      await refreshLandingStats(true);
+      await loadTimetable();
+
+      // Real-time listener: updates automatically when user submits report in student.html
+      SmartLabData.subscribeTelemetry(async () => {
+        await refreshLandingStats(true);
+      });
+
+      // Background polling every 3s
+      setInterval(async () => {
+        try {
+          await SmartLabData.autoReleaseExpiredComputers();
+        } catch (e) { }
+        await refreshLandingStats(true);
+      }, 3000);
+    });
+  </script>
+</body>
+
+</html>

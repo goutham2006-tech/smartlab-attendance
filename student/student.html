@@ -1,0 +1,383 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Student Portal | SmartLab Live Telemetry & Booking</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="assets/css/design-system.css" />
+  <link rel="stylesheet" href="assets/css/student.css" />
+</head>
+
+<body>
+  <div class="student-shell">
+    <header class="stu-header">
+      <div class="brand-wrap">
+        <div class="brand-mark">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+            <path d="M4 18V7.5A1.5 1.5 0 0 1 5.5 6H18.5A1.5 1.5 0 0 1 20 7.5V18M8 9.5H16M8 13H13M9 18V20M15 18V20"
+              stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" />
+          </svg>
+        </div>
+        <div>
+          <div class="portal-badge">
+            <span class="live-dot pulse"></span>
+            <span>Live Lab Telemetry</span>
+          </div>
+          <h1>Student Portal</h1>
+        </div>
+      </div>
+      <div class="header-actions">
+        <div id="student-user-pill" class="student-user-pill hidden">
+          <span>👤 <strong id="header-student-name">Student</strong></span>
+          <button id="logout-student-btn" type="button" class="btn btn-sm btn-ghost"
+            title="Logout and change student">Exit</button>
+        </div>
+        <a href="index.html" id="header-back-home" class="btn btn-ghost">← Back to Home</a>
+      </div>
+    </header>
+
+    <main class="stu-content">
+      <!-- STUDENT PORTAL TAB BAR NAVIGATION -->
+      <nav class="student-tab-bar hidden" id="student-tab-bar" aria-label="Student Portal Navigation">
+        <button type="button" class="student-tab-btn active" id="tab-btn-workstations" data-tab="welcome">
+          <span class="tab-icon">🖥️</span>
+          <span class="tab-label">Workstation Availability</span>
+          <span class="tab-badge" id="tab-avail-badge">-- Avail</span>
+        </button>
+        <button type="button" class="student-tab-btn" id="tab-btn-schedule" data-tab="form">
+          <span class="tab-icon">📅</span>
+          <span class="tab-label">12-Hour Session Schedule</span>
+          <span class="tab-pill-indicator">12h Clock</span>
+        </button>
+      </nav>
+
+      <!-- STUDENT LOGIN & AUTHENTICATION PANEL -->
+      <section id="login-panel" class="panel active">
+        <div class="login-card-shell">
+          <div class="login-card-header">
+            <div class="login-badge-icon">
+              <svg width="28" height="28" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                <path
+                  d="M12 15C13.6569 15 15 13.6569 15 12C15 10.3431 13.6569 9 12 9C10.3431 9 9 10.3431 9 12C9 13.6569 10.3431 15 12 15Z"
+                  stroke="currentColor" stroke-width="2" />
+                <path d="M19 21V19C19 16.7909 17.2091 15 15 15H9C6.79086 15 5 16.7909 5 19V21" stroke="currentColor"
+                  stroke-width="2" stroke-linecap="round" />
+                <path d="M16 3.13C17.22 3.65 18.23 4.54 18.9 5.67M5.1 5.67C5.77 4.54 6.78 3.65 8 3.13"
+                  stroke="currentColor" stroke-width="2" stroke-linecap="round" />
+              </svg>
+            </div>
+            <p class="eyebrow-mini">Student Verification Required</p>
+            <h2>Student Authentication</h2>
+            <p class="meta-text">Please enter your registered Student Name and Date of Birth to access the workstation
+              booking portal.</p>
+          </div>
+
+          <form id="student-login-form" class="student-login-form" novalidate>
+            <div class="field-group">
+              <label for="login-student-name">Student Full Name *</label>
+              <input id="login-student-name" name="name" type="text" placeholder="Enter full name (e.g. INDHIRAN)"
+                list="enrolled-students-list" required autocomplete="off" />
+              <datalist id="enrolled-students-list"></datalist>
+              <span class="field-help">Type or select your name as enrolled in the lab registry.</span>
+            </div>
+
+            <div class="field-group" style="margin-top: 16px;">
+              <label for="login-student-dob">Date of Birth (DOB) *</label>
+              <input id="login-student-dob" name="dob" type="date" required />
+              <span class="field-help">Select your date of birth matching official records.</span>
+            </div>
+
+            <div id="login-error" class="form-error hidden" style="margin-top: 16px;"></div>
+
+            <div class="login-actions-row" style="margin-top: 24px;">
+              <button type="submit" id="login-submit-btn" class="btn btn-primary btn-large" style="width: 100%;">
+                <span>⚡ Verify Credentials & Open Portal</span>
+              </button>
+            </div>
+          </form>
+        </div>
+      </section>
+
+      <!-- WELCOME & LIVE TELEMETRY PANEL -->
+      <section id="welcome-panel" class="panel">
+        <div class="welcome-header">
+          <div>
+            <p class="eyebrow-mini">Workstation Status</p>
+            <h2>Lab Availability & Workstation Telemetry</h2>
+          </div>
+          <span id="computer-status-badge" class="status-badge success">Live Monitoring</span>
+        </div>
+
+        <!-- LIVE LAB TELEMETRY METRICS -->
+        <div class="telemetry-bar-card">
+          <div class="telemetry-kpi-row">
+            <div class="telemetry-stat">
+              <span class="t-label">Available Workstations</span>
+              <strong class="t-val text-success" id="telemetry-avail-count">--</strong>
+              <span class="t-sub" id="telemetry-avail-sub">Ready to book now</span>
+            </div>
+            <div class="telemetry-stat">
+              <span class="t-label">Occupied / In Use</span>
+              <strong class="t-val text-info" id="telemetry-inuse-count">--</strong>
+              <span class="t-sub" id="telemetry-inuse-sub">Students active</span>
+            </div>
+            <div class="telemetry-stat">
+              <span class="t-label">Offline / Maintenance</span>
+              <strong class="t-val text-muted" id="telemetry-off-count">--</strong>
+              <span class="t-sub">Reserved or updating</span>
+            </div>
+            <div class="telemetry-stat highlight">
+              <span class="t-label">Workstation Assigned</span>
+              <strong class="t-val text-primary" id="assigned-pc-label">LAB-PC-01</strong>
+              <span class="t-sub">Recommended next machine</span>
+            </div>
+          </div>
+
+          <!-- OCCUPANCY GAUGE BAR -->
+          <div class="telemetry-progress-wrap">
+            <div class="telemetry-track">
+              <div id="stu-meter-avail" class="meter-fill available" style="width: 60%;"></div>
+              <div id="stu-meter-inuse" class="meter-fill inuse" style="width: 30%;"></div>
+              <div id="stu-meter-off" class="meter-fill offline" style="width: 10%;"></div>
+            </div>
+            <div class="telemetry-track-labels">
+              <span>🟢 Available: <strong id="bar-avail-text">60%</strong></span>
+              <span>🔵 In Use: <strong id="bar-inuse-text">30%</strong></span>
+              <span>⚪ Offline: <strong id="bar-off-text">10%</strong></span>
+            </div>
+          </div>
+        </div>
+
+        <!-- QUICK WORKSTATION PICKER -->
+        <div class="workstation-picker-box">
+          <div class="picker-header">
+            <div>
+              <h3>Select Your Workstation</h3>
+              <p class="meta-text">Click any green Available PC to immediately select it for booking.</p>
+            </div>
+            <div class="picker-legend">
+              <span class="p-legend-dot available"></span> Available
+              <span class="p-legend-dot in-use"></span> In Use
+              <span class="p-legend-dot offline"></span> Offline
+            </div>
+          </div>
+          <div id="student-pc-grid" class="student-pc-grid"></div>
+        </div>
+
+        <div class="cta-row" style="margin-top: 24px;">
+          <button id="start-recording-btn" class="btn btn-primary btn-large">
+            <span>⚡ Start Usage Recording for</span>
+            <strong id="btn-target-pc">LAB-PC-01</strong>
+          </button>
+        </div>
+      </section>
+
+      <!-- USAGE FORM PANEL -->
+      <section id="form-panel" class="panel">
+        <div class="panel-header">
+          <div>
+            <p class="eyebrow-mini">Step 2 of 2</p>
+            <h2>Schedule Workstation Session</h2>
+          </div>
+          <div class="selected-pc-badge" id="selected-pc-chip">
+            <span>Selected Workstation:</span>
+            <strong id="chip-pc-id">LAB-PC-01</strong>
+          </div>
+        </div>
+
+        <form id="usage-form" novalidate>
+          <div class="form-grid">
+            <div class="field-group">
+              <label for="student-name">Student Full Name * (Verified)</label>
+              <input id="student-name" name="studentName" type="text" placeholder="Verified Student Name" readonly
+                required style="background: rgba(99, 102, 241, 0.06); font-weight: 600;" />
+            </div>
+
+            <div class="field-group">
+              <label for="register-number">Register / Roll Number *</label>
+              <input id="register-number" name="registerNumber" type="text" placeholder="e.g. 21CS142" required />
+            </div>
+
+            <div class="field-group">
+              <label for="department">Academic Department *</label>
+              <select id="department" name="department" required>
+                <option value="">Select department</option>
+                <option value="CSE">Computer Science & Engineering (CSE)</option>
+                <option value="AI & DS">Artificial Intelligence & Data Science</option>
+                <option value="ECE">Electronics & Communication (ECE)</option>
+                <option value="EEE">Electrical & Electronics (EEE)</option>
+                <option value="MECH">Mechanical Engineering (MECH)</option>
+                <option value="IT">Information Technology (IT)</option>
+                <option value="CIVIL">Civil Engineering</option>
+              </select>
+            </div>
+
+            <div class="field-group">
+              <label for="year">Year of Study *</label>
+              <select id="year" name="year" required>
+                <option value="">Select academic year</option>
+                <option value="1st Year">1st Year</option>
+                <option value="2nd Year">2nd Year</option>
+                <option value="3rd Year">3rd Year</option>
+                <option value="4th Year">4th Year</option>
+              </select>
+            </div>
+
+            <div class="field-group">
+              <label for="computer-id">Workstation Machine *</label>
+              <select id="computer-id" name="computerId" required>
+                <option value="">Select a computer</option>
+              </select>
+            </div>
+
+            <div class="field-group">
+              <label for="date-booked">Usage Date *</label>
+              <input id="date-booked" name="bookedDate" type="date" required />
+            </div>
+
+            <!-- 12-HOUR USAGE TIME SETTINGS -->
+            <div class="field-group" style="grid-column: 1 / -1; margin-top: 4px; margin-bottom: -4px;">
+              <div
+                style="display: flex; align-items: center; justify-content: space-between; padding: 12px 16px; background: #f8fafc; border: 1.5px solid #e2e8f0; border-radius: 14px;">
+                <span
+                  style="font-weight: 800; font-size: 0.88rem; color: #1e1b4b; text-transform: uppercase; letter-spacing: 0.04em;">⏰
+                  Manual Usage Time Setting</span>
+                <span
+                  style="font-size: 0.75rem; font-weight: 700; color: #4f46e5; background: #eef2ff; padding: 3px 9px; border-radius: 6px;">12-Hour
+                  AM/PM Format</span>
+              </div>
+            </div>
+
+            <!-- 12-HOUR START TIME OF USAGE -->
+            <div class="field-group time-picker-field">
+              <label for="start-hour">Start Time of Usage (12-Hour AM/PM) *</label>
+              <div class="time-picker-12h" id="start-time-picker">
+                <select id="start-hour" class="time-select" aria-label="Start Hour">
+                  <option value="01">01</option>
+                  <option value="02">02</option>
+                  <option value="03">03</option>
+                  <option value="04">04</option>
+                  <option value="05">05</option>
+                  <option value="06">06</option>
+                  <option value="07">07</option>
+                  <option value="08">08</option>
+                  <option value="09" selected>09</option>
+                  <option value="10">10</option>
+                  <option value="11">11</option>
+                  <option value="12">12</option>
+                </select>
+                <span class="time-sep">:</span>
+                <select id="start-min" class="time-select" aria-label="Start Minute">
+                  <option value="00" selected>00</option>
+                  <option value="05">05</option>
+                  <option value="10">10</option>
+                  <option value="15">15</option>
+                  <option value="20">20</option>
+                  <option value="25">25</option>
+                  <option value="30">30</option>
+                  <option value="35">35</option>
+                  <option value="40">40</option>
+                  <option value="45">45</option>
+                  <option value="50">50</option>
+                  <option value="55">55</option>
+                </select>
+                <div class="period-toggle-group">
+                  <button type="button" class="period-btn active" data-period="AM" id="start-period-am">AM</button>
+                  <button type="button" class="period-btn" data-period="PM" id="start-period-pm">PM</button>
+                </div>
+              </div>
+              <input type="hidden" id="start-time" name="startTime" value="09:00 AM" required />
+              <span class="field-help">Select your exact usage start time (12-hour clock)</span>
+            </div>
+
+            <!-- 12-HOUR END TIME OF USAGE -->
+            <div class="field-group time-picker-field">
+              <label for="end-hour">End Time of Usage (12-Hour AM/PM) *</label>
+              <div class="time-picker-12h" id="end-time-picker">
+                <select id="end-hour" class="time-select" aria-label="End Hour">
+                  <option value="01">01</option>
+                  <option value="02">02</option>
+                  <option value="03">03</option>
+                  <option value="04">04</option>
+                  <option value="05">05</option>
+                  <option value="06">06</option>
+                  <option value="07">07</option>
+                  <option value="08">08</option>
+                  <option value="09">09</option>
+                  <option value="10" selected>10</option>
+                  <option value="11">11</option>
+                  <option value="12">12</option>
+                </select>
+                <span class="time-sep">:</span>
+                <select id="end-min" class="time-select" aria-label="End Minute">
+                  <option value="00">00</option>
+                  <option value="05">05</option>
+                  <option value="10">10</option>
+                  <option value="15">15</option>
+                  <option value="20">20</option>
+                  <option value="25">25</option>
+                  <option value="30" selected>30</option>
+                  <option value="35">35</option>
+                  <option value="40">40</option>
+                  <option value="45">45</option>
+                  <option value="50">50</option>
+                  <option value="55">55</option>
+                </select>
+                <div class="period-toggle-group">
+                  <button type="button" class="period-btn active" data-period="AM" id="end-period-am">AM</button>
+                  <button type="button" class="period-btn" data-period="PM" id="end-period-pm">PM</button>
+                </div>
+              </div>
+              <input type="hidden" id="end-time" name="endTime" value="10:30 AM" required />
+              <span class="field-help">Workstation automatically unlocks at this end time</span>
+            </div>
+          </div>
+
+          <div class="session-duration-calc" id="duration-calc-banner">
+            <span>Calculated Usage Duration:</span>
+            <strong id="calc-duration-text">1 hr 30 min</strong>
+          </div>
+
+          <div id="form-error" class="form-error hidden"></div>
+
+          <div class="submit-row" style="margin-top: 24px;">
+            <button type="button" id="cancel-form-btn" class="btn btn-ghost">← Change Workstation</button>
+            <button type="submit" id="submit-record-btn" class="btn btn-primary btn-large">
+              <span>Confirm & Submit Record to DB</span>
+            </button>
+          </div>
+        </form>
+      </section>
+
+      <!-- SUCCESS PANEL -->
+      <section id="success-panel" class="panel">
+        <div class="success-shell">
+          <div class="success-icon">✓</div>
+          <div class="success-copy">
+            <p class="eyebrow-mini">Live Database Confirmed</p>
+            <h2>Workstation Successfully Booked!</h2>
+            <p>Your lab session has been registered in the database. Workstation telemetry has been updated in
+              real-time.</p>
+          </div>
+        </div>
+
+        <div class="summary-card" id="summary-card"></div>
+
+        <div class="submit-row" style="margin-top: 28px; justify-content: center;">
+          <a href="index.html" id="back-home-btn" class="btn btn-primary btn-large"
+            style="min-width: 220px; text-align: center; text-decoration: none;">🏠 Back to Home</a>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <script src="assets/js/utils.js"></script>
+  <script src="assets/js/data.js"></script>
+  <script src="assets/js/student.js"></script>
+</body>
+
+</html>
